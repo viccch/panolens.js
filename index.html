@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width, shrink-to-fit=no">
+  <title>Panolens.js Development Example</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- <script  src="node_modules/three/build/three.module.js"></script> -->
+  <!-- <script  src="build/panolens.module.js"></script> -->
+  <script src="build/three.js"></script>
+  <script src="build/panolens.js"></script>
+
+  <script>
+
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    var title = params.get('title');
+
+    if( id === null || id === '' ) {
+      id = '01002200001309011158321765A';
+    }
+
+    document.title = "全景浏览：" + title;
+
+    if (id != undefined && id != '') {
+
+      const viewer = new PANOLENS.Viewer();
+      viewer.add(new PANOLENS.BaiduStreetviewPanorama(id));
+    }
+
+  </script>
+
+</body>
+
+</html>

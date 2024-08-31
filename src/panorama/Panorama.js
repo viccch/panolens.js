@@ -263,26 +263,27 @@ Panorama.prototype = Object.assign( Object.create( THREE.Mesh.prototype ), {
     getZoomLevel: function () {
 
         let zoomLevel;
+        let max_of_width_and_height = Math.max(window.innerWidth,window.innerHeight);
+        
+        if ( max_of_width_and_height <= 800 ) {
 
-        if ( window.innerWidth <= 800 ) {
+            zoomLevel = this.ImageQualityFair;
 
-            zoomLevel = this.ImageQualityFair;/** 2 */
+        } else if ( max_of_width_and_height > 800 &&  max_of_width_and_height <= 1280 ) {
 
-        } else if ( window.innerWidth > 800 &&  window.innerWidth <= 1280 ) {
+            zoomLevel = this.ImageQualityMedium;
 
-            zoomLevel = this.ImageQualityMedium;/** 3 */
+        } else if ( max_of_width_and_height > 1280 && max_of_width_and_height <= 1920 ) {
 
-        } else if ( window.innerWidth > 1280 && window.innerWidth <= 1920 ) {
+            zoomLevel = this.ImageQualityHigh;
 
-            zoomLevel = this.ImageQualityHigh;/** 4 */
+        } else if ( max_of_width_and_height > 1920 ) {
 
-        } else if ( window.innerWidth > 1920 ) {
-
-            zoomLevel = this.ImageQualitySuperHigh;/** 5 */
+            zoomLevel = this.ImageQualitySuperHigh;
 
         } else {
 
-            zoomLevel = this.ImageQualityLow;/** 1 */
+            zoomLevel = this.ImageQualityLow;
 
         }
 

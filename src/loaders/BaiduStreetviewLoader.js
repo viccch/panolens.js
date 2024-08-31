@@ -1,13 +1,11 @@
-
-import { TextureLoader } from './TextureLoader';
+import {TextureLoader} from './TextureLoader';
 
 /**
  * @classdesc Baidu Street View Loader
  * @constructor
- * @param {object} parameters 
+ * @param {object} parameters
  */
 function BaiduStreetviewLoader(parameters = {}) {
-
     this._parameters = parameters;
     this._zoom = null;
     this._panoId = null;
@@ -35,46 +33,33 @@ function BaiduStreetviewLoader(parameters = {}) {
     let gl;
 
     try {
-
         const canvas = document.createElement('canvas');
 
         gl = canvas.getContext('experimental-webgl');
 
         if (!gl) {
-
             gl = canvas.getContext('webgl');
-
         }
-
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
 
     this.maxW = Math.max(gl.getParameter(gl.MAX_TEXTURE_SIZE), this.maxW);
     this.maxH = Math.max(gl.getParameter(gl.MAX_TEXTURE_SIZE), this.maxH);
-
 }
 
 Object.assign(BaiduStreetviewLoader.prototype, {
-
     constructor: BaiduStreetviewLoader,
 
     /**
      * Set progress
-     * @param {number} loaded 
-     * @param {number} total 
+     * @param {number} loaded
+     * @param {number} total
      * @memberOf BaiduStreetviewLoader
      * @instance
      */
     setProgress: function (loaded, total) {
-
         if (this.onProgress) {
-
-            this.onProgress({ loaded: loaded, total: total });
-
+            this.onProgress({loaded: loaded, total: total});
         }
-
     },
 
     /**
@@ -83,7 +68,6 @@ Object.assign(BaiduStreetviewLoader.prototype, {
      * @instance
      */
     adaptTextureToZoom: function () {
-
         const w = this.widths[this._zoom];
         const h = this.heights[this._zoom];
 
@@ -96,25 +80,25 @@ Object.assign(BaiduStreetviewLoader.prototype, {
         for (let y = 0; y < this._hc; y++) {
             for (let x = 0; x < this._wc; x++) {
                 const c = document.createElement('canvas');
-                if (x < (this._wc - 1)) c.width = maxW; else c.width = w - (maxW * x);
-                if (y < (this._hc - 1)) c.height = maxH; else c.height = h - (maxH * y);
+                if (x < this._wc - 1) c.width = maxW;
+                else c.width = w - maxW * x;
+                if (y < this._hc - 1) c.height = maxH;
+                else c.height = h - maxH * y;
                 this._canvas.push(c);
                 this._ctx.push(c.getContext('2d'));
             }
         }
-
     },
 
     /**
      * Compose from tile
-     * @param {number} x 
-     * @param {number} y 
-     * @param {*} texture 
+     * @param {number} x
+     * @param {number} y
+     * @param {*} texture
      * @memberOf BaiduStreetviewLoader
      * @instance
      */
     composeFromTile: function (x, y, texture) {
-
         const maxW = this.maxW;
         const maxH = this.maxH;
 
@@ -130,7 +114,6 @@ Object.assign(BaiduStreetviewLoader.prototype, {
         this._ctx[py * this._wc + px].drawImage(texture, 0, 0, texture.width, texture.height, x, y, 512, 512);
 
         this.progress();
-
     },
 
     /**
@@ -139,23 +122,18 @@ Object.assign(BaiduStreetviewLoader.prototype, {
      * @instance
      */
     progress: function () {
-
         this._count++;
 
         this.setProgress(this._count, this._total);
 
         if (this._count === this._total) {
-
             this.canvas = this._canvas;
             this.panoId = this._panoId;
             this.zoom = this._zoom;
 
             if (this.onPanoramaLoad) {
-
                 this.onPanoramaLoad(this._canvas[0]);
-
             }
-
         }
     },
 
@@ -165,7 +143,6 @@ Object.assign(BaiduStreetviewLoader.prototype, {
      * @instance
      */
     composePanorama: function () {
-
         this.setProgress(0, 1);
 
         const w = this.levelsW[this._zoom];
@@ -175,12 +152,17 @@ Object.assign(BaiduStreetviewLoader.prototype, {
         this._count = 0;
         this._total = w * h;
 
-        const { useWebGL } = this._parameters;
+        const {useWebGL} = this._parameters;
 
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
-                const url = 'https://mapsv0.bdimg.com/scape/?qt=pdata&sid=' + this._panoId + '&pos=' + y + '_' + x + '&z=' + this._zoom;
+                // const url = "http://127.0.0.1:3000/pdata?sid={sid}&pos={pos}&z={z}".replace("{sid}", this._panoId).replace("${pos}", y + "_" + x).replace('{z}',this._zoom);
+                const url = 'https://mapsv0.bdimg.com/scape/?qt=pdata&sid={sid}&pos={pos}&z={z}'
+                    .replace('{sid}', this._panoId)
+                    .replace('{pos}', y + '_' + x)
+                    .replace('{z}', this._zoom);
                 /*
+                 * const url = 'https://mapsv0.bdimg.com/scape/?qt=pdata&sid=' + this._panoId + '&pos=' + y + '_' + x + '&z=' + this._zoom;
                  * https://mapsv0.bdimg.com/scape/?qt=pdata&sid=22444400132009081807459086XX&pos=2_4&z=4&udt=&from=H5
                  * const url = 'https://geo0.ggpht.com/cbk?cb_client=maps_sv.tactile&authuser=0&hl=en&output=tile&zoom=' + this._zoom + '&x=' + x + '&y=' + y + '&panoid=' + this._panoId + '&nbt&fover=2';
                  */
@@ -200,19 +182,16 @@ Object.assign(BaiduStreetviewLoader.prototype, {
                 })(x, y);
             }
         }
-
     },
 
     /**
      * Load
-     * @param {string} panoid 
+     * @param {string} panoid
      * @memberOf BaiduStreetviewLoader
      * @instance
      */
     load: function (panoid) {
-
         this.loadPano(panoid);
-
     },
 
     /**
@@ -222,7 +201,6 @@ Object.assign(BaiduStreetviewLoader.prototype, {
      * @instance
      */
     loadPano: function (id) {
-
         const self = this;
 
         self._panoId = id;
@@ -231,16 +209,14 @@ Object.assign(BaiduStreetviewLoader.prototype, {
 
     /**
      * Set zoom level
-     * @param {number} z 
+     * @param {number} z
      * @memberOf BaiduStreetviewLoader
      * @instance
      */
     setZoom: function (z) {
-
         this._zoom = z;
         this.adaptTextureToZoom();
-    }
-
+    },
 });
 
-export { BaiduStreetviewLoader };
+export {BaiduStreetviewLoader};

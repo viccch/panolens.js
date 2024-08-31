@@ -4,7 +4,6 @@ import * as THREE from 'three';
 
 /**
  * @classdesc Baidu streetview panorama
- * @description [How to get Panorama ID]{@link http://stackoverflow.com/questions/29916149/google-maps-streetview-how-to-get-panorama-id}
  * @constructor
  * @param {string} panoId - Panorama id from Baidu Streetview 
  */
